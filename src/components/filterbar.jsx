@@ -1,21 +1,18 @@
 import React, { Component } from "react";
-import { getKeywords } from "../utils/api-calls";
+import { getKeywords, getRegions } from "../utils/api-calls";
 class Filterbar extends Component {
   //Todo: get the state from the backend instead of hard coding
   state = {
     cost: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    regions: [
-      "Noxus",
-      "Demacia",
-      "Ionia",
-      "Freljord",
-      "Shadow Isles",
-      "Piltover & Zaun",
-    ],
+    regions: [],
     keywords: [],
   };
   async componentDidMount() {
-    const keywords = await getKeywords();
+    const keywordsData = await getKeywords();
+    const regionsData = await getRegions();
+    let keywords = new Array();
+    keywordsData.map((keyword) => keywords.push(keyword.name));
+    this.setState({ regions: regionsData });
     this.setState({ keywords: keywords });
   }
 
@@ -26,24 +23,31 @@ class Filterbar extends Component {
         <form className="container-fluid justify-content-start">
           {this.state.regions.map((region) => {
             return (
-              <a
-                href="#"
-                className={
-                  this.props.currentRegion === region
-                    ? "btn btn-danger"
-                    : "btn btn-dark"
-                }
-                key={region}
-                onClick={() => {
-                  if (this.props.currentRegion === region)
-                    this.props.handleRegion("All Cards");
-                  else {
-                    this.props.handleRegion(region);
+              <div>
+                <a
+                  href="#"
+                  className={
+                    this.props.currentRegion === region.name
+                      ? "btn btn-danger"
+                      : "btn btn-dark"
                   }
-                }}
-              >
-                {region}
-              </a>
+                  key={region}
+                  onClick={() => {
+                    if (this.props.currentRegion === region.name)
+                      this.props.handleRegion("All Cards");
+                    else {
+                      this.props.handleRegion(region.name);
+                    }
+                  }}
+                >
+                  {region.name}
+                </a>
+                <img
+                  src={region.iconAbsolutePath}
+                  className="img rounded float-start"
+                  style={{ width: 40, height: 34 }}
+                ></img>
+              </div>
             );
           })}
         </form>
