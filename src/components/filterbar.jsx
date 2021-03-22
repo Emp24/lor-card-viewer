@@ -85,7 +85,7 @@ class Filterbar extends Component {
                 }
                 key={keyword}
                 onClick={() => {
-                  if (this.props.keyword === keyword)
+                  if (this.props.currentKeyword === keyword)
                     this.props.handleKeyword("none");
                   else {
                     this.props.handleKeyword(keyword);

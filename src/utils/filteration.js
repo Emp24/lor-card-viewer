@@ -1,23 +1,31 @@
 export function filteration(data, region, cost, keyword) {
-  if (cost === -1) {
-    if (region === "All Cards") return data.sort((a, b) => a.cost - b.cost);
-    const filtered = data.filter((card) => card.region === region);
-    filtered.sort((a, b) => a.cost - b.cost);
-    return filtered;
-  } else {
-    if (region === "All Cards")
-      return data.filter((card) => card.cost === cost);
-    const filtered = data.filter(
-      (card) => card.region === region && card.cost === cost
-    );
-    return filtered;
-  }
+  const firstFilter = filterByCost(cost, data);
+  const secondFilter = filterByRegion(region, firstFilter);
+  const thirdFilter = filterByKeywords(keyword, secondFilter);
+  return thirdFilter;
 }
 
-function filterByCost(cost) {
+function filterByCost(cost, data) {
   if (cost !== -1) {
+    const filtered = data.filter((card) => card.cost === cost);
+    return filtered;
   }
+  return data.sort((a, b) => a.cost - b.cost);
 }
-function filterByKeywords(keywords) {}
-function filterByRegion(region) {}
+function filterByRegion(region, data) {
+  if (region !== "All Cards") {
+    const filtered = data.filter((card) => card.region === region);
+
+    return filtered;
+  }
+  return data;
+}
+function filterByKeywords(keyword, data) {
+  if (keyword !== "none") {
+    const filtered = data.filter((card) => card.keywords.includes(keyword));
+    return filtered;
+  }
+  return data;
+}
+
 function filterByType(type) {}
