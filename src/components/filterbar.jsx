@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { getKeywords, getRegions } from "../utils/api-calls";
 class Filterbar extends Component {
   //Todo: get the state from the backend instead of hard coding
+  //States contain a list of objects coming from the API, they contain all the information needed (description)
   state = {
     cost: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     regions: [],
@@ -10,10 +11,21 @@ class Filterbar extends Component {
   async componentDidMount() {
     const keywordsData = await getKeywords();
     const regionsData = await getRegions();
-    let keywords = new Array();
-    keywordsData.map((keyword) => keywords.push(keyword.name));
+    //Sorting the keywords alphabatically (A to Z)
+    keywordsData.sort((a, b) => {
+      let fa = a.name.toLowerCase();
+      let fb = b.name.toLowerCase();
+
+      if (fa < fb) {
+        return -1;
+      }
+      if (fa > fb) {
+        return 1;
+      }
+      return 0;
+    });
     this.setState({ regions: regionsData });
-    this.setState({ keywords: keywords });
+    this.setState({ keywords: keywordsData });
   }
 
   render() {
@@ -27,17 +39,13 @@ class Filterbar extends Component {
                 <a
                   href="#"
                   className={
-                    this.props.currentRegion === region.name
+                    this.props.currentRegions.includes(region.name)
                       ? "btn btn-danger"
                       : "btn btn-dark"
                   }
-                  key={region}
+                  key={region.name}
                   onClick={() => {
-                    if (this.props.currentRegion === region.name)
-                      this.props.handleRegion("All Cards");
-                    else {
-                      this.props.handleRegion(region.name);
-                    }
+                    this.props.handleRegion(region.name);
                   }}
                 >
                   {region.name}
@@ -58,18 +66,15 @@ class Filterbar extends Component {
               <a
                 href="#"
                 className={
-                  this.props.currentCost === cost
+                  this.props.currentCosts.includes(cost)
                     ? "btn btn-danger"
                     : "btn btn-dark"
                 }
                 key={cost}
                 onClick={() => {
-                  if (this.props.currentCost === cost)
-                    this.props.handleCost(-1);
-                  else {
-                    this.props.handleCost(cost);
-                  }
+                  this.props.handleCost(cost);
                 }}
+                role="button"
               >
                 {cost}
               </a>
@@ -83,24 +88,48 @@ class Filterbar extends Component {
               <a
                 href="#"
                 className={
-                  this.props.currentKeyword === keyword
+                  this.props.currentKeywords.includes(keyword.name)
                     ? "btn btn-danger"
                     : "btn btn-dark"
                 }
-                key={keyword}
+                key={keyword.nameRef}
                 onClick={() => {
-                  if (this.props.currentKeyword === keyword)
-                    this.props.handleKeyword("none");
-                  else {
-                    this.props.handleKeyword(keyword);
-                  }
+                  this.props.handleKeyword(keyword.name);
                 }}
               >
-                {keyword}
+                {keyword.name}
               </a>
             );
           })}
         </form>
+        <div class="dropdown">
+          <a
+            className="btn btn-secondary dropdown-toggle"
+            href="#"
+            role="button"
+            id="dropdownMenuLink"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Keywords
+          </a>
+
+          <ul
+            className="dropdown-menu"
+            aria-labelledby="dropdownMenuLink"
+            style={{ overflow: "auto", maxHeight: 300 }}
+          >
+            {this.state.keywords.map((keyword) => {
+              return (
+                <li>
+                  <a className="dropdown-item" href="#">
+                    {keyword.name}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </nav>
     );
   }

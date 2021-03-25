@@ -5,9 +5,9 @@ import { filteration } from "../utils/filteration";
 class Cards extends Component {
   state = {
     data: [],
-    currentRegion: "All Cards",
-    currentCost: -1,
-    currentKeyword: "none",
+    currentRegions: [],
+    currentCosts: [],
+    currentKeywords: [],
   };
 
   async componentDidMount() {
@@ -15,29 +15,51 @@ class Cards extends Component {
     const data = await promise;
     this.setState({ data: data });
   }
+  //Adds and removes costs from the state array (currentCosts)
   handleCost = (cost) => {
-    this.setState({ currentCost: cost });
+    let newCosts = [...this.state.currentCosts];
+    if (newCosts.includes(cost)) {
+      newCosts = newCosts.filter((c) => c !== cost);
+    } else {
+      newCosts.push(cost);
+    }
+    this.setState({ currentCosts: newCosts });
   };
+  //Adds and removes regions from the state array (currentRegions)
   handleRegion = (region) => {
-    this.setState({ currentRegion: region });
+    let newRegions = [...this.state.currentRegions];
+    if (newRegions.includes(region)) {
+      newRegions = newRegions.filter((r) => r !== region);
+    } else {
+      newRegions.push(region);
+    }
+
+    this.setState({ currentRegions: newRegions });
   };
+  //Adds and removes keywords from the state array (currentKeywords)
   handleKeyword = (keyword) => {
-    this.setState({ currentKeyword: keyword });
+    let newKeywords = [...this.state.currentKeywords];
+    if (newKeywords.includes(keyword)) {
+      newKeywords = newKeywords.filter((k) => k !== keyword);
+    } else {
+      newKeywords.push(keyword);
+    }
+    this.setState({ currentKeywords: newKeywords });
   };
 
   render() {
     const cards = filteration(
       this.state.data,
-      this.state.currentRegion,
-      this.state.currentCost,
-      this.state.currentKeyword
+      this.state.currentRegions,
+      this.state.currentCosts,
+      this.state.currentKeywords
     );
     return (
       <React.Fragment>
         <Filterbar
-          currentCost={this.state.currentCost}
-          currentRegion={this.state.currentRegion}
-          currentKeyword={this.state.currentKeyword}
+          currentCosts={this.state.currentCosts}
+          currentRegions={this.state.currentRegions}
+          currentKeywords={this.state.currentKeywords}
           handleRegion={this.handleRegion}
           handleCost={this.handleCost}
           handleKeyword={this.handleKeyword}
