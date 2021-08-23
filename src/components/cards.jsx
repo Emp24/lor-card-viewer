@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import LazyLoad from "react-lazy-load";
 import { fullData } from "../utils/api-calls";
 import Filterbar from "./filterbar";
 import { filteration } from "../utils/filteration";
@@ -67,10 +68,12 @@ class Cards extends Component {
         {cards.map((card) => {
           return (
             <img
+              loading="lazy"
               src={"./img/cards/" + card.cardCode + ".png"}
               alt={card.name}
               className="img rounded float-start"
               key={card.cardCode}
+              style={{}}
             />
           );
         })}
